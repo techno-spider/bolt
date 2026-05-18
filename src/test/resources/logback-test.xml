@@ -1,0 +1,43 @@
+<configuration>
+
+    <!-- Common log pattern -->
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss} [%thread] %-5level [%X{testName}] - %msg%n"/>
+
+    <!-- Console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Dynamic per-test logging -->
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>testName</key>
+            <defaultValue>default</defaultValue>
+        </discriminator>
+
+        <sift>
+            <appender name="FILE-${testName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>target/logs/${testName}.log</file>
+                <append>true</append>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>target/logs/${testName}-%d{yyyy-MM-dd}.log</fileNamePattern>
+                    <maxHistory>5</maxHistory>
+                </rollingPolicy>
+
+                <encoder>
+                    <pattern>${LOG_PATTERN}</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SIFT"/>
+    </root>
+
+</configuration>
