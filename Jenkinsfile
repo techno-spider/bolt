@@ -9,8 +9,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/techno-spider/bolt.git'
+                git 'https://github.com/techno-spider/bolt.git'
             }
         }
 
@@ -19,19 +18,15 @@ pipeline {
                 bat 'mvn clean test'
             }
         }
-    }
 
-    post {
-        always {
-            archiveArtifacts artifacts: 'target/**/*.*', fingerprint: true
-        }
-
-        success {
-            echo 'Build Passed'
-        }
-
-        failure {
-            echo 'Build Failed'
+        stage('Allure Report') {
+            steps {
+                allure(
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'target/allure-results']]
+                )
+            }
         }
     }
 }
