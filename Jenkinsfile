@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/techno-spider/bolt.git'
-            }
-        }
-
         stage('Build & Test') {
             steps {
                 bat 'mvn clean test'
